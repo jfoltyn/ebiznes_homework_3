@@ -16,5 +16,5 @@ create table "product" (
 
 # --- !Downs
 
-drop table "product" if exists;
-drop table "category" if exists;
+drop table if exists "product";
+drop table if exists "category";

@@ -1,6 +1,12 @@
-# --- Add Order
-
 # --- !Ups
+
+create table "user" (
+  "id" integer not null primary key autoincrement,
+  "firstName" varchar not null,
+  "lastName" varchar not null,
+  "address" varchar not null,
+  "admin" bit not null
+);
 
 create table "order" (
   "id" integer not null primary key autoincrement,
@@ -18,4 +24,5 @@ create table "order" (
 
 # --- !Downs
 
-drop table "order" if exists;
+drop table if exists "user";
+drop table if exists "order";
