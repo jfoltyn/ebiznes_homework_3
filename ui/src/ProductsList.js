@@ -8,7 +8,7 @@ class ProductsList extends Component {
       products: []
    };
 
-   async fetchProducts() {
+   fetchProducts() {
       axios.get('http://localhost:9000/products')
               .then(res => this.setState({products: res.data}));
    }
@@ -18,6 +18,7 @@ class ProductsList extends Component {
    }
 
    render() {
+      console.log(this.state.products)
       return (
               <ul className="list-unstyled">
                  {this.state.products.map(product =>
