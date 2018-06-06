@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ProductItem} from "./ProductItem";
+import {ProductsListItem} from "./ProductsListItem";
 import axios from 'axios';
 
 class ProductsList extends Component {
@@ -13,7 +13,7 @@ class ProductsList extends Component {
               .then(res => this.setState({products: res.data}));
    }
 
-   componentDidMount(){
+   componentDidMount() {
       this.fetchProducts();
    }
 
@@ -22,9 +22,10 @@ class ProductsList extends Component {
       return (
               <ul className="list-unstyled">
                  {this.state.products.map(product =>
-                         <ProductItem
+                         <ProductsListItem
                                  name={product.name}
-                                 description={product.description}/>)}
+                                 description={product.description}
+                                 productId={product.id}/>)}
               </ul>
       );
    }
