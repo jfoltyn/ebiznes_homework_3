@@ -9,14 +9,14 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
   // We want the JdbcProfile for this provider
-  private val dbConfig = dbConfigProvider.get[JdbcProfile]
+  val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   // These imports are important, the first one brings db into scope, which will let you do the actual db operations.
   // The second one brings the Slick DSL into scope, which lets you define the table and other queries.
   import dbConfig._
   import profile.api._
 
-  private class UserTable(tag: Tag) extends Table[User](tag, "user") {
+  class UserTable(tag: Tag) extends Table[User](tag, "user") {
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
 

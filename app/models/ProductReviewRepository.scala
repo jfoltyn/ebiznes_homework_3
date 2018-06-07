@@ -8,13 +8,14 @@ import slick.lifted.ProvenShape
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ProductReviewRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
+class ProductReviewRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, userRepository: UserRepository)(implicit ec: ExecutionContext) {
 
   val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
   import profile.api._
 
+  import userRepository.UserTable
   class ProductReviewTable(tag: Tag) extends Table[ProductReview](tag, "product_review") {
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
@@ -31,6 +32,9 @@ class ProductReviewRepository @Inject()(dbConfigProvider: DatabaseConfigProvider
 
   val productReview = TableQuery[ProductReviewTable]
 
+  import userRepository.UserTable
+  private val user = TableQuery[UserTable]
+
   def create(review: String, userId: Long, productId: Long): Future[ProductReview] = db.run {
     (productReview.map(o => (o.review, o.userId, o.productId))
       returning productReview.map(_.id)
@@ -41,5 +45,13 @@ class ProductReviewRepository @Inject()(dbConfigProvider: DatabaseConfigProvider
 
   def list(): Future[Seq[ProductReview]] = db.run {
     productReview.result
+  }
+
+  private val productReviewQuery = (productId: Long) => for {
+    (pr, u) <- productReview.filter(_.productId === productId) join user on (_.userId === _.id)
+  } yield (pr, u)
+
+  def getProductReview(productId: Long): Future[Seq[(ProductReview, User)]] = db.run {
+    productReviewQuery(productId).result
   }
 }

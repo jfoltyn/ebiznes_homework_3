@@ -29,8 +29,18 @@ class ProductReviewController @Inject()(productReviewRepository: ProductReviewRe
   }
 
   def getReviews: Action[AnyContent] = Action.async { implicit request =>
-    productReviewRepository.list().map { order =>
-      Ok(toJson(order))
+    productReviewRepository.list().map { response =>
+      Ok(toJson(response))
     }
+  }
+
+  def getReview(productId: Long) = Action.async { implicit request =>
+    productReviewRepository.getProductReview(productId).map(response => {
+      var items = response.map(item=>{
+        val(pr, user) = item
+        ProductReviewResponse(pr.id, pr.review, user.firstName + " " + user.lastName)
+      })
+      Ok(toJson(items))
+    })
   }
 }
