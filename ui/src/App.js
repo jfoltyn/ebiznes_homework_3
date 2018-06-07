@@ -4,6 +4,11 @@ import Home from './Home';
 import ProductPage from "./ProductPage";
 
 class App extends Component {
+
+   componentDidMount() {
+      Object.assign(GLOBAL_VARS, GLOBAL_VARS, {"userLogged": false});
+   }
+
    render() {
       return (
               <BrowserRouter>
@@ -16,4 +21,7 @@ class App extends Component {
    }
 }
 
+let GLOBAL_VARS = {};
+
 export default App;
+export {GLOBAL_VARS};
