@@ -1,16 +1,22 @@
 import React from 'react';
-import { Link } from 'react-router-dom'
-import logo from './logo.svg';
+import {Link} from 'react-router-dom'
 import './TitleBar.css';
 
 function TitleBar() {
    return (
-           <header className="TitleBar TitleBar-header">
-              <Link to="/" className="btn">
-                 <img src={logo} className="TitleBar-logo" alt="logo"/>
-                 <h1 className="TitleBar-title">EBiznes project shop</h1>
+           <nav className="navbar navbar-expand-sm bg-dark navbar-dark">
+              <Link to="/" className="navbar-brand navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                 EBiznes Super Sklep
               </Link>
-           </header>
+
+              <Link to="/" className="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                 <ul className="navbar-nav ml-auto">
+                    <li className="nav-item">
+                       <a className="btn btn-outline-light" href="#">Login</a>
+                    </li>
+                 </ul>
+              </Link>
+           </nav>
    );
 
 }
