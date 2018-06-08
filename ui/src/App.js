@@ -5,15 +5,12 @@ import ProductPage from "./ProductPage";
 
 class App extends Component {
 
-   componentDidMount() {
-      Object.assign(GLOBAL_VARS, GLOBAL_VARS, {"userLogged": false});
-   }
-
    render() {
       return (
               <BrowserRouter>
                  <div>
                     <Route exact path='/' component={Home}/>
+                    <Route exact path='/logged' component={Home}/>
                     <Route path='/product/:productId' component={ProductPage}/>
                  </div>
               </BrowserRouter>
@@ -21,7 +18,11 @@ class App extends Component {
    }
 }
 
-let GLOBAL_VARS = {};
+let GLOBAL_VARS = {
+   "userLogged": false,
+   "access_token ": null,
+   "email ": ""
+};
 
 export default App;
 export {GLOBAL_VARS};

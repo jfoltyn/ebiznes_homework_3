@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import TitleBar from './TitleBar';
+import NavBar from './NavBar';
 import axios from "axios/index";
 import './ProductPage.css'
 
@@ -33,7 +33,7 @@ class ProductPage extends Component {
    render() {
       return (
               <div>
-                 <TitleBar/>
+                 <NavBar/>
                  <div className="container">
                     <div className="row">
                        <div className="col-lg-12">

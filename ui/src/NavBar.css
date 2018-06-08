@@ -2,7 +2,7 @@
     text-align: center;
 }
 
-.TitleBar>a{
+.TitleBar a{
     color: white;
 }
 
@@ -33,4 +33,8 @@
     to {
         transform: rotate(360deg);
     }
+}
+
+.title-bar-log-btn {
+    color: white !important;
 }
