@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {ProductsListItem} from "./ProductsListItem";
 import axios from 'axios';
+import './ProductList.css'
 
 class ProductsList extends Component {
 
@@ -20,7 +21,7 @@ class ProductsList extends Component {
    render() {
       console.log(this.state.products)
       return (
-              <ul className="list-unstyled">
+              <ul className="product-list list-unstyled">
                  {this.state.products.map(product =>
                          <ProductsListItem
                                  name={product.name}
