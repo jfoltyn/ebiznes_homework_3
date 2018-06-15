@@ -4,7 +4,7 @@ create table "user" (
   "id" integer not null primary key autoincrement,
   "firstName" varchar not null,
   "lastName" varchar not null,
-  "address" varchar not null,
+  "email" varchar not null,
   "admin" bit not null
 );
 

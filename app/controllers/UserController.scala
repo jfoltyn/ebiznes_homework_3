@@ -8,18 +8,18 @@ import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UserController @Inject()(userRepo: UserRepository, cc: MessagesControllerComponents)(implicit ec: ExecutionContext)
+class UserController @Inject()(userRepo: UserPersistedRepository, cc: MessagesControllerComponents)(implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
 
   import play.api.libs.json.Json
 
   def addUser(): Action[JsValue] = Action.async(parse.json) { implicit request =>
 
-    val orderFromJson: JsResult[User] = Json.fromJson[User](request.body)
+    val orderFromJson: JsResult[UserPersisted] = Json.fromJson[UserPersisted](request.body)
 
     orderFromJson match {
-      case JsSuccess(o: User, path: JsPath) =>
-        userRepo.create(o.firstName, o.lastName, o.address, o.admin).map { _ => Ok }
+      case JsSuccess(o: UserPersisted, path: JsPath) =>
+        userRepo.create(o.firstName, o.lastName, o.email, o.admin).map { _ => Ok }
       case e: JsError => Future.successful(Ok("Errors: " + JsError.toJson(e).toString()))
     }
 

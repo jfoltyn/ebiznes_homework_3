@@ -2,6 +2,9 @@ import React, {Component} from 'react';
 import NavBar from './NavBar';
 import axios from "axios/index";
 import './ProductPage.css'
+import {GLOBAL_VARS} from './App.js';
+import { browserHistory } from 'react-router';
+
 
 class ProductPage extends Component {
 
@@ -30,6 +33,10 @@ class ProductPage extends Component {
       this.fetchProducts();
    }
 
+   isAuthenticated() {
+      return GLOBAL_VARS.userLogged;
+   }
+
    render() {
       return (
               <div>
@@ -42,7 +49,10 @@ class ProductPage extends Component {
                              <img className="card-img-top img-fluid" src="http://placehold.it/900x400" alt=""/>
                              <div className="card-body">
                                 <h3 className="card-title">{this.state.product.name}</h3>
-                                <a href="#" className="btn btn-block btn-success">BUY</a>
+                                {
+                                   this.isAuthenticated() && <a href="#" className="btn btn-block btn-success">BUY</a>
+                                }
+
                                 <hr/>
                                 <h4>${this.state.product.price}</h4>
                                 <p className="card-text data">{this.state.product.description}</p>
@@ -63,7 +73,10 @@ class ProductPage extends Component {
                                            </div>
                                    )
                                 }
-                                <a href="#" className="btn btn-success">Leave a Review</a>
+                                {
+                                   this.isAuthenticated() && <a href="#" className="btn btn-success">Leave a Review</a>
+                                }
+
                              </div>
                           </div>
 

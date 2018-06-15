@@ -9,19 +9,12 @@ class NavBar extends Component {
 
    onSuccess(response) {
       GLOBAL_VARS.userLogged = true;
-      // let data =
-      //         {
-      //            'client_id': "5dcdbb4d8204658e3fac",
-      //            'client_secret': "0283ff3d2180f684cfd905260e2ebc1f6e94c287",
-      //            'code': response.code
-      //         };
       let data = new FormData();
       data.append('client_id', "5dcdbb4d8204658e3fac");
       data.append('client_secret', "0283ff3d2180f684cfd905260e2ebc1f6e94c287");
       data.append('code', response.code);
       fetch(`https://github.com/login/oauth/access_token`, {
          method: 'POST',
-         // mode: 'no-cors',
          headers: {
             'Accept': 'application/json'
          },
@@ -67,7 +60,7 @@ class NavBar extends Component {
       return (
               <nav className="navbar navbar-expand-sm bg-dark navbar-dark">
                  <Link to="/" className="navbar-brand navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-                    EBiznes Super Sklep na 3.0 albo i lepiej
+                    EBiznes Super Sklep - ulepszona wersja zatem 3.5 albo lepiej (a nie jak ostatnio tylko 3.0)
                  </Link>
 
                  <div className="navbar-collapse collapse w-100 order-3 dual-collapse2">

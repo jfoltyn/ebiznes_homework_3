@@ -1,9 +1,25 @@
 package models
 
-import play.api.libs.json._
+import java.util.UUID
 
-case class User(id: Long, firstName: String, lastName: String, address: String, admin: Boolean)
+import com.mohiva.play.silhouette.api.{Identity, LoginInfo}
 
-object User {
-  implicit val userFormat = Json.format[User]
+case class User(
+                 userID: UUID,
+                 loginInfo: LoginInfo,
+                 firstName: Option[String],
+                 lastName: Option[String],
+                 fullName: Option[String],
+                 email: Option[String],
+                 avatarURL: Option[String],
+                 activated: Boolean) extends Identity {
+
+  def name = fullName.orElse {
+    firstName -> lastName match {
+      case (Some(f), Some(l)) => Some(f + " " + l)
+      case (Some(f), None) => Some(f)
+      case (None, Some(l)) => Some(l)
+      case _ => None
+    }
+  }
 }

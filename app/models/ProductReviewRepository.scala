@@ -8,7 +8,7 @@ import slick.lifted.ProvenShape
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ProductReviewRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, userRepository: UserRepository)(implicit ec: ExecutionContext) {
+class ProductReviewRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, userRepository: UserPersistedRepository)(implicit ec: ExecutionContext) {
 
   val dbConfig = dbConfigProvider.get[JdbcProfile]
 
@@ -51,7 +51,7 @@ class ProductReviewRepository @Inject()(dbConfigProvider: DatabaseConfigProvider
     (pr, u) <- productReview.filter(_.productId === productId) join user on (_.userId === _.id)
   } yield (pr, u)
 
-  def getProductReview(productId: Long): Future[Seq[(ProductReview, User)]] = db.run {
+  def getProductReview(productId: Long): Future[Seq[(ProductReview, UserPersisted)]] = db.run {
     productReviewQuery(productId).result
   }
 }
