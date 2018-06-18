@@ -3,7 +3,7 @@
 # ~~~~
 
 # Home page
-GET         /                                controllers.ApplicationController.index
+GET         /signedIn                          controllers.ApplicationController.signedIn
 GET         /signOut                         controllers.ApplicationController.signOut
 
 # Products

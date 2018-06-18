@@ -2,45 +2,15 @@ import React, {Component} from 'react';
 import {Link} from 'react-router-dom'
 import './NavBar.css';
 import {GLOBAL_VARS} from './App.js';
-import GitHubLogin from 'react-github-login';
-import axios from 'axios';
 
 class NavBar extends Component {
 
-   onSuccess(response) {
-      GLOBAL_VARS.userLogged = true;
-      let data = new FormData();
-      data.append('client_id', "5dcdbb4d8204658e3fac");
-      data.append('client_secret', "0283ff3d2180f684cfd905260e2ebc1f6e94c287");
-      data.append('code', response.code);
-      fetch(`https://github.com/login/oauth/access_token`, {
-         method: 'POST',
-         headers: {
-            'Accept': 'application/json'
-         },
-         body: data
-      }).then(res => {
-         console.log(res)
-         // GLOBAL_VARS.access_token = res.data.access_token;
-         // this.downloadEmail()
-      });
+   login(response) {
+      fetch(`http://localhost:9000/authenticate/github`)
+              .then(res => {
+                 // console.log(res)
+              });
    };
-
-   downloadEmail() {
-      console.log(GLOBAL_VARS.access_token);
-      const url = 'https://api.github.com/user/emails?access_token=' + GLOBAL_VARS.access_token;
-      axios({
-         method: 'get',
-         url: url,
-         headers: {
-            'content-type': 'application/x-www-form-urlencoded',
-            'Accept': 'application/json'
-         }
-      }).then(mails => {
-         GLOBAL_VARS.email = mails.filter(mail => mail.primary)[0].email;
-         this.forceUpdate();
-      })
-   }
 
    onFailure = response => console.error(response);
 
@@ -71,12 +41,7 @@ class NavBar extends Component {
                        <li className="nav-item">
                           {
                              !this.isAuthenticated() && (
-                                     <GitHubLogin clientId="5dcdbb4d8204658e3fac"
-                                                  redirectUri=""
-                                                  className="btn btn-outline-light title-bar-log-btn"
-                                                  buttonText="LOGIN"
-                                                  onSuccess={this.onSuccess.bind(this)}
-                                                  onFailure={this.onFailure.bind(this)}/>
+                                     <a className="btn btn-outline-light title-bar-log-btn" href="http://localhost:9000/authenticate/github">LOGIN</a>
                              )
                           }
                           {

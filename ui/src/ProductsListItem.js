@@ -10,7 +10,7 @@ class ProductsListItem extends Component {
                     <img className="mr-3" src="http://placehold.it/128x128" alt="Generic placeholder image"/>
                     <div className={"media-body"}>
                        <h4 className="mt-2 mb-1">{name}</h4>
-                       {description}
+                       {description.length < 100 ? description : description.substring(0,100) + "..."}
                     </div>
                  </li>
 

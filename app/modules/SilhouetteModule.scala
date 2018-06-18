@@ -2,6 +2,7 @@ package modules
 
 import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides}
+import com.mohiva.play.silhouette.api.actions.{SecuredErrorHandler, UnsecuredErrorHandler}
 import com.mohiva.play.silhouette.api.crypto._
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.services._
@@ -22,16 +23,18 @@ import com.mohiva.play.silhouette.impl.util._
 import com.mohiva.play.silhouette.password.{BCryptPasswordHasher, BCryptSha256PasswordHasher}
 import com.mohiva.play.silhouette.persistence.daos.{DelegableAuthInfoDAO, InMemoryAuthInfoDAO}
 import com.mohiva.play.silhouette.persistence.repositories.DelegableAuthInfoRepository
+import com.typesafe.config.Config
 import models.daos._
 import models.services.{UserService, UserServiceImpl}
-import _root_.net.ceedubs.ficus.Ficus._
-import _root_.net.ceedubs.ficus.readers.ArbitraryTypeReader._
+import net.ceedubs.ficus.Ficus._
+import net.ceedubs.ficus.readers.ArbitraryTypeReader._
+import net.ceedubs.ficus.readers.ValueReader
 import net.codingwell.scalaguice.ScalaModule
 import play.api.Configuration
 import play.api.libs.openid.OpenIdClient
 import play.api.libs.ws.WSClient
-import play.api.mvc.CookieHeaderEncoding
-import utils.auth.DefaultEnv
+import play.api.mvc.{Cookie, CookieHeaderEncoding}
+import utils.auth.{CustomSecuredErrorHandler, CustomUnsecuredErrorHandler, DefaultEnv}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -41,10 +44,31 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class SilhouetteModule extends AbstractModule with ScalaModule {
 
   /**
+    * A very nested optional reader, to support these cases:
+    * Not set, set None, will use default ('Lax')
+    * Set to null, set Some(None), will use 'No Restriction'
+    * Set to a string value try to match, Some(Option(string))
+    */
+  implicit val sameSiteReader: ValueReader[Option[Option[Cookie.SameSite]]] =
+    (config: Config, path: String) => {
+      if (config.hasPathOrNull(path)) {
+        if (config.getIsNull(path))
+          Some(None)
+        else {
+          Some(Cookie.SameSite.parse(config.getString(path)))
+        }
+      } else {
+        None
+      }
+    }
+
+  /**
     * Configures the module.
     */
   def configure() {
     bind[Silhouette[DefaultEnv]].to[SilhouetteProvider[DefaultEnv]]
+    bind[UnsecuredErrorHandler].to[CustomUnsecuredErrorHandler]
+    bind[SecuredErrorHandler].to[CustomSecuredErrorHandler]
     bind[UserService].to[UserServiceImpl]
     bind[UserDAO].to[UserDAOImpl]
     bind[CacheLayer].to[PlayCacheLayer]
@@ -104,6 +128,7 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     */
   @Provides
   def provideSocialProviderRegistry(
+                                     gitHubProvider: GitHubProvider,
                                      facebookProvider: FacebookProvider,
                                      googleProvider: GoogleProvider,
                                      vkProvider: VKProvider,
@@ -112,6 +137,7 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
                                      yahooProvider: YahooProvider): SocialProviderRegistry = {
 
     SocialProviderRegistry(Seq(
+      gitHubProvider,
       googleProvider,
       facebookProvider,
       twitterProvider,
@@ -335,6 +361,23 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
                                   passwordHasherRegistry: PasswordHasherRegistry): CredentialsProvider = {
 
     new CredentialsProvider(authInfoRepository, passwordHasherRegistry)
+  }
+
+  /**
+    * Provides the Facebook provider.
+    *
+    * @param httpLayer          The HTTP layer implementation.
+    * @param socialStateHandler The social state handler implementation.
+    * @param configuration      The Play configuration.
+    * @return The Facebook provider.
+    */
+  @Provides
+  def provideGithubProvider(
+                               httpLayer: HTTPLayer,
+                               socialStateHandler: SocialStateHandler,
+                               configuration: Configuration): GitHubProvider = {
+
+    new GitHubProvider(httpLayer, socialStateHandler, configuration.underlying.as[OAuth2Settings]("silhouette.github"))
   }
 
   /**

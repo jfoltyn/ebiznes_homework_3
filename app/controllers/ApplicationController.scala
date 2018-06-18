@@ -20,15 +20,12 @@ class ApplicationController @Inject()(
                                        ec: ExecutionContext
                                      ) extends AbstractController(components) with I18nSupport {
 
-  /**
-    * Handles the index action.
-    *
-    * @return The result to display.
-    */
-  def index = silhouette.SecuredAction.async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
 
-    val firstName = request.identity.firstName.get
-    val lastName = request.identity.lastName.get
+  def signedIn = silhouette.SecuredAction.async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
+
+    val fullName = request.identity.fullName.get
+    val firstName = fullName.split(" ")(0)
+    val lastName = fullName.split(" ")(1)
     val email = request.identity.email.get
 
     userPersistedRepository.create(firstName, lastName, email, admin = false).map(user => {
