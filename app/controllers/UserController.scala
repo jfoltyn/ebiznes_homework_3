@@ -1,14 +1,17 @@
 package controllers
 
+import com.mohiva.play.silhouette.api.Silhouette
 import javax.inject._
 import models._
 import play.api.libs.json.Json.toJson
 import play.api.libs.json._
 import play.api.mvc._
+import utils.auth.DefaultEnv
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UserController @Inject()(userRepo: UserPersistedRepository, cc: MessagesControllerComponents)(implicit ec: ExecutionContext)
+class UserController @Inject()(silhouette: Silhouette[DefaultEnv],
+                               userRepo: UserPersistedRepository, cc: MessagesControllerComponents)(implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
 
   import play.api.libs.json.Json
@@ -29,5 +32,9 @@ class UserController @Inject()(userRepo: UserPersistedRepository, cc: MessagesCo
     userRepo.list().map { user =>
       Ok(toJson(user))
     }
+  }
+
+  def loggedUser = silhouette.SecuredAction { implicit request =>
+    Ok(toJson(request.identity))
   }
 }

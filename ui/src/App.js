@@ -18,11 +18,4 @@ class App extends Component {
    }
 }
 
-let GLOBAL_VARS = {
-   "userLogged": false,
-   "access_token ": null,
-   "email ": ""
-};
-
 export default App;
-export {GLOBAL_VARS};

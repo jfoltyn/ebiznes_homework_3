@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import NavBar from './NavBar';
 import axios from "axios/index";
 import './ProductPage.css'
-import {GLOBAL_VARS} from './App.js';
+import {isAuthenticated} from './App.js';
 import { browserHistory } from 'react-router';
 
 
@@ -34,7 +34,7 @@ class ProductPage extends Component {
    }
 
    isAuthenticated() {
-      return GLOBAL_VARS.userLogged;
+      return sessionStorage.getItem('userLogged');
    }
 
    render() {
